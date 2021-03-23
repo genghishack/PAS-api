@@ -1,0 +1,64 @@
+# NOTE: update this with your service name
+service: mapapp-api
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-offline
+
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage}
+  region: us-west-2
+
+  # 'iamRoleStatements' defines the permission policy for the Lambda function.
+  # In this case Lambda functions are granted with permissions to access DynamoDB.
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: '*'
+
+resources:
+  Resources:
+    MapAppApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: mapapp
+
+    MapAppUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: mapapp-user-pool
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+
+  Outputs:
+    UserPoolId:
+      Value:
+        Ref: MapAppUserPool
+
+    UserPoolArn:
+      Value:
+        Fn::GetAtt: [MapAppUserPool, Arn]
+      Export:
+        Name: MapAppUserPool-arn
+
+    MapAppApiGatewayRestApiId:
+      Value:
+        Ref: MapAppApiGatewayRestApi
+      Export:
+        Name: MapAppApiGateway-restApiId
+
+    MapAppApiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - MapAppApiGatewayRestApi
+          - RootResourceId
+      Export:
+        Name: MapAppApiGateway-rootResourceId

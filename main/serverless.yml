@@ -1,0 +1,121 @@
+service: mapapp-main
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+package:
+  individually: true
+#  include:
+#    - ../node_modules
+
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    webpackConfig: ../webpack.config.js
+    includeModules:
+      packagePath: ../package.json
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage}
+  region: us-west-2
+  environment:
+    STAGE: ${opt:stage}
+    DB_NAME: ${ssm:/mapapp/${opt:stage}/postgres/db}
+    DB_HOST: ${ssm:/mapapp/${opt:stage}/postgres/host}
+    DB_USER: ${ssm:/mapapp/${opt:stage}/postgres/user}
+    DB_PASS: ${ssm:/mapapp/${opt:stage}/postgres/pass}
+    MAPQUEST_API_KEY: ${ssm:/mapapp/${opt:stage}/mapquest/key}
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': MapAppApiGateway-restApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': MapAppApiGateway-rootResourceId
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter*
+      Resource: 'arn:aws:ssm:us-west-2:*:parameter/*'
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminListGroupsForUser
+        - cognito-idp:AdminAddUserToGroup
+        - cognito-idp:AdminRemoveUserFromGroup
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminDeleteUser
+        - cognito-idp:AdminDisableUser
+        - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminGetUser
+        - cognito-idp:ListUsers
+        - cognito-idp:ListGroups
+      Resource:
+        'Fn::ImportValue': MapAppUserPool-arn
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: '*'
+
+functions:
+  foo:
+    handler: foo/router.main
+    description: No-op template for API endpoints
+    events:
+      - http:
+          path: foo
+          method: any
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: foo/{action}
+          method: any
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: foo/{action}/{id}
+          method: any
+          cors: true
+          authorizer: aws_iam
+  user:
+    handler: user/router.main
+    description: Endpoints for accessing user data
+    events:
+      - http:
+          path: user
+          method: any
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: user/{action}
+          method: any
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: user/{action}/{id}
+          method: any
+          cors: true
+          authorizer: aws_iam
+  resource:
+    handler: resource/router.main
+    description: Endpoints for accessing resource data
+    events:
+      - http:
+          path: resource
+          method: any
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: resource/{action}
+          method: any
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: resource/{action}/{id}
+          method: any
+          cors: true
+          authorizer: aws_iam
