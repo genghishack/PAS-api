@@ -1,9 +1,9 @@
 {
-  "name": "mapapp-api",
-  "version": "0.6.0",
-  "description": "MapApp Serverless API",
+  "name": "pas-api",
+  "version": "0.1.0",
+  "description": "PAS Serverless API",
   "author": "Chris Wade <genghishack@gmail.com>",
-  "repository": "https://github.com/genghishack/mapapp-api.git",
+  "repository": "https://github.com/genghishack/pas-api.git",
   "license": "GPL-3.0-or-later",
   "private": true,
   "devDependencies": {

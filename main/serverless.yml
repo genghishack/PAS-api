@@ -1,4 +1,4 @@
-service: mapapp-main
+service: pas-main
 
 # Use the serverless-webpack plugin to transpile ES6
 plugins:
@@ -26,16 +26,16 @@ provider:
   region: us-west-2
   environment:
     STAGE: ${opt:stage}
-    DB_NAME: ${ssm:/mapapp/${opt:stage}/postgres/db}
-    DB_HOST: ${ssm:/mapapp/${opt:stage}/postgres/host}
-    DB_USER: ${ssm:/mapapp/${opt:stage}/postgres/user}
-    DB_PASS: ${ssm:/mapapp/${opt:stage}/postgres/pass}
-    MAPQUEST_API_KEY: ${ssm:/mapapp/${opt:stage}/mapquest/key}
+    DB_NAME: ${ssm:/pas/${opt:stage}/postgres/db}
+    DB_HOST: ${ssm:/pas/${opt:stage}/postgres/host}
+    DB_USER: ${ssm:/pas/${opt:stage}/postgres/user}
+    DB_PASS: ${ssm:/pas/${opt:stage}/postgres/pass}
+    MAPQUEST_API_KEY: ${ssm:/pas/${opt:stage}/mapquest/key}
   apiGateway:
     restApiId:
-      'Fn::ImportValue': MapAppApiGateway-restApiId
+      'Fn::ImportValue': ApiGateway-restApiId
     restApiRootResourceId:
-      'Fn::ImportValue': MapAppApiGateway-rootResourceId
+      'Fn::ImportValue': ApiGateway-rootResourceId
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -55,7 +55,7 @@ provider:
         - cognito-idp:ListUsers
         - cognito-idp:ListGroups
       Resource:
-        'Fn::ImportValue': MapAppUserPool-arn
+        'Fn::ImportValue': UserPool-arn
     - Effect: Allow
       Action:
         - lambda:InvokeFunction

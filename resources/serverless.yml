@@ -1,5 +1,5 @@
 # NOTE: update this with your service name
-service: mapapp-api
+service: pas-api
 
 # Use the serverless-webpack plugin to transpile ES6
 plugins:
@@ -24,15 +24,15 @@ provider:
 
 resources:
   Resources:
-    MapAppApiGatewayRestApi:
+    ApiGatewayRestApi:
       Type: AWS::ApiGateway::RestApi
       Properties:
-        Name: mapapp
+        Name: pas
 
-    MapAppUserPool:
+    UserPool:
       Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: mapapp-user-pool
+        UserPoolName: pas-user-pool
         UsernameAttributes:
           - email
         AutoVerifiedAttributes:
@@ -41,24 +41,24 @@ resources:
   Outputs:
     UserPoolId:
       Value:
-        Ref: MapAppUserPool
+        Ref: UserPool
 
     UserPoolArn:
       Value:
-        Fn::GetAtt: [MapAppUserPool, Arn]
+        Fn::GetAtt: [UserPool, Arn]
       Export:
-        Name: MapAppUserPool-arn
+        Name: UserPool-arn
 
-    MapAppApiGatewayRestApiId:
+    ApiGatewayRestApiId:
       Value:
-        Ref: MapAppApiGatewayRestApi
+        Ref: ApiGatewayRestApi
       Export:
-        Name: MapAppApiGateway-restApiId
+        Name: ApiGateway-restApiId
 
-    MapAppApiGatewayRestApiRootResourceId:
+    ApiGatewayRestApiRootResourceId:
       Value:
         Fn::GetAtt:
-          - MapAppApiGatewayRestApi
+          - ApiGatewayRestApi
           - RootResourceId
       Export:
-        Name: MapAppApiGateway-rootResourceId
+        Name: ApiGateway-rootResourceId
