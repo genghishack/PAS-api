@@ -10,6 +10,9 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/resource', resource);
+app.use('/user', user);
+
 app.get('/', (req: Request, res: Response, next: NextFunction): void => {
   res.send('API Running');
 });
