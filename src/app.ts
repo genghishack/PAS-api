@@ -3,6 +3,7 @@ import cors from 'cors';
 import {IConstants} from "./types/constants";
 import {init} from "./setup.js";
 import resource from "./routes/resource.js";
+import user from "./routes/user.js";
 
 init();
 const {api: {port}}: IConstants = constants;
@@ -12,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/resource', resource);
-// app.use('/user', user);
+app.use('/user', user);
 
 app.get('/', (req: Request, res: Response, next: NextFunction): void => {
   res.send('API Running');
