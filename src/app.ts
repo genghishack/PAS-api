@@ -4,6 +4,7 @@ import {IConstants} from "./types/constants";
 import {init} from "./setup.js";
 import resource from "./routes/resource.js";
 import user from "./routes/user.js";
+import CognitoExpress from "cognito-express";
 
 init();
 const {api: {port}}: IConstants = constants;
@@ -11,6 +12,29 @@ const {api: {port}}: IConstants = constants;
 const app: Express = express();
 app.use(cors());
 app.use(express.json());
+
+const cognitoExpress = new CognitoExpress({
+  region: "us-west-2",
+  cognitoUserPoolId: "us-west-2_wvUVsyZMh",
+  tokenUse: "access",
+  tokenExpiration: 3600000
+})
+
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+  let accessToken = req.headers.authorization;
+  if (!accessToken) {
+    return res.status(401).send("Access Token missing");
+  }
+  // log.debug({accessToken});
+  try {
+    const response = await cognitoExpress.validate(accessToken);
+    res.locals.user = response;
+  } catch (e) {
+    log.error(e);
+  }
+  next();
+});
+
 
 app.use('/resource', resource);
 app.use('/user', user);

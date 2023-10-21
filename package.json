@@ -13,11 +13,16 @@
     "build": "rm -rf dist && tsc",
     "watch": "rm -rf dist && tsc --watch"
   },
+  "bugs": {
+    "url": "https://github.com/genghishack/pas-api/issues"
+  },
+  "homepage": "https://github.com/genghishack/pas-api#readme",
   "dependencies": {
     "aws-sdk": "^2.1463.0",
     "axios": "^0.23.0",
     "babel-runtime": "^6.26.0",
     "bunyan": "^1.8.15",
+    "cognito-express": "^3.0.3",
     "cors": "^2.8.5",
     "dateformat": "^5.0.3",
     "dotenv": "^8.6.0",
