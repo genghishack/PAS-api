@@ -5,6 +5,8 @@ import {init} from "./setup.js";
 import resource from "./routes/resource.js";
 import user from "./routes/user.js";
 import CognitoExpress from "cognito-express";
+import {getUserObj} from "./lib/user.js";
+import {AccessTokenUserObj, UserObj} from "./types/user";
 
 init();
 const {api: {port}}: IConstants = constants;
@@ -27,8 +29,10 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   }
   // log.debug({accessToken});
   try {
-    const response = await cognitoExpress.validate(accessToken);
-    res.locals.user = response;
+    const accessTokenUserObj: AccessTokenUserObj = await cognitoExpress.validate(accessToken);
+    const userObj: UserObj = await getUserObj(accessTokenUserObj);
+    log.debug({userObj});
+    res.locals.user = userObj;
   } catch (e) {
     log.error(e);
   }
