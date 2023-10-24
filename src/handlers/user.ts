@@ -1,10 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {isAdmin} from "../lib/user";
-import {failure, noAccess, success} from "../lib/response";
 import {IConstants} from "../types/constants";
-import {listCognitoUsers} from "../lib/cognito";
 import {CognitoUserParams} from "../types/user";
-import {getAdminUserModel} from "../lib/admin";
+import {getUserModel, isAdmin, isGuest} from "../lib/user.js";
+import {failure, noAccess, success} from "../lib/response.js";
+import {createCognitoUser, listCognitoUsers} from "../lib/cognito.js";
+import {getAdminUserModel} from "../lib/admin.js";
 
 export const listUsers = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
@@ -35,3 +35,30 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   log.debug(message);
   return success(res, message);
 }
+
+// const createUser = async (user, id, data) => {
+// const createUser = async (req: Request, res: Response, next: NextFunction) => {
+//   const {user} = res.locals;
+//   const data = {email: 'user@example.com'};
+//   if (isGuest(user)) return noAccess(res);
+//
+//   let newUser = {};
+//   try {
+//     if (isAdmin(user) && data.email) {
+//       const newUserParams = {
+//         DesiredDeliveryMediums: ['EMAIL'],
+//         Username: data.email,
+//         UserPoolId: user.userParams.UserPoolId,
+//       }
+//       newUser = await createCognitoUser(newUserParams);
+//     } else {
+//       // Regular users can only create their own db record from the event data
+//       const [newUserRecord] = await createUserOnSignup(user);
+//       newUser = getUserModel(newUserRecord);
+//     }
+//     return success({data: newUser, count: 1});
+//   } catch (e) {
+//     return failure(e);
+//   }
+// }
+

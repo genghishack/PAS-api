@@ -1,10 +1,10 @@
 import express, {Router} from "express";
-import {getUserById, listUsers} from "../handlers/user";
+import {getUserById, listUsers} from "../handlers/user.js";
 
 const router: Router = express.Router();
 
 router.get('/', listUsers);
-router.post('/', createUser);
+// router.post('/', createUser);
 router.get('/:id', getUserById);
 
 export default router;

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import bunyan from "bunyan";
 import {Constants, Schemas, Tables} from "./types/constants";
 import {getDateStamp} from "./lib/utils.js";
+import CognitoExpress from "cognito-express";
 
 declare global {
   var log: Logger;
@@ -42,6 +43,12 @@ export const init = (): void => {
         isp: new AWS.CognitoIdentityServiceProvider({
           apiVersion: '2016-04-18',
           region: process.env.AWS_REGION!
+        }),
+        token: new CognitoExpress({
+          region: process.env.AWS_REGION!,
+          cognitoUserPoolId: process.env.AWS_COGNITO_USER_POOL_ID!,
+          tokenUse: "access",
+          tokenExpiration: 3600000
         })
       }
     },

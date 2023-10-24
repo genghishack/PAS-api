@@ -9,6 +9,7 @@ export type AWSConsts = {
     userPoolId: string;
     identityPoolId: string;
     isp: AWS.CognitoIdentityServiceProvider;
+    token: any;
   }
 }
 

@@ -1,7 +1,7 @@
 import {CognitoUserParams, UserObj} from "../types/user";
-import {getCognitoUserObj} from "./cognito";
-import {getUserAttribute, getUserRoles} from "./user";
-import {getUser, updateUser} from "../sql/user";
+import {getCognitoUserObj} from "./cognito.js";
+import {getUserAttribute, getUserRoles} from "./user.js";
+import {getUser, updateUser} from "../sql/user.js";
 
 export const getAdminUserModel = async (adminUser: UserObj, userParams: CognitoUserParams) => {
   try {

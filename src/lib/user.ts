@@ -2,15 +2,19 @@ import {getCognitoUserObj, getCognitoUserGroups, getCognitoUserParams, addCognit
 import {AccessTokenUserObj, CognitoUserObj, UserObj, CognitoUserParams} from "../types/user";
 
 export const isAdmin = (user: UserObj) => {
-  return user.accessToken['cognito:groups'].includes('Admin');
+  return user.auth && user.accessToken['cognito:groups'].includes('Admin');
 }
 
 export const isEditor = (user: UserObj) => {
-  return user.accessToken['cognito:groups'].includes('Editor');
+  return user.auth && user.accessToken['cognito:groups'].includes('Editor');
 }
 
 export const isUser = (user: UserObj) => {
-  return user.accessToken['cognito:groups'].includes('User');
+  return user.auth && user.accessToken['cognito:groups'].includes('User');
+}
+
+export const isGuest = (user: UserObj) => {
+  return user.auth === false;
 }
 
 export const getUserObj = async (ATUserObj: AccessTokenUserObj): Promise<UserObj> => {
@@ -19,6 +23,7 @@ export const getUserObj = async (ATUserObj: AccessTokenUserObj): Promise<UserObj
     const cognitoUserObj: CognitoUserObj = await getCognitoUserObj(userParams)
     const cognitoUserGroups = await getCognitoUserGroups(userParams);
     return<UserObj> {
+      auth: true,
       accessToken: ATUserObj,
       cognitoUser: cognitoUserObj,
       cognitoGroups: cognitoUserGroups,

@@ -41,6 +41,7 @@ export type CognitoGroupObj = {
 }
 
 export type UserObj = {
+  auth: boolean;
   accessToken: AccessTokenUserObj;
   userParams: CognitoUserParams;
   cognitoUser: CognitoUserObj;

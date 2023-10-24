@@ -25,16 +25,51 @@ export const getUser = async (
   }
 };
 
-const createUser = async (
-  user: any,
-  data: any
-) => {
+// const createUser = async (
+//   user: any,
+//   data: any
+// ) => {
+//   const {schemas: {user: schema}, tables: {user: tableName}}: IConstants = constants;
+//   const label = 'create user';
+//   let params: string[] = []
+//
+//   const sql = `
+//     SELECT 'no-op';
+//   `;
+//
+//   try {
+//     return pgQuery(sql, params, label);
+//   } catch (e) {
+//     return Promise.reject(e);
+//   }
+// };
+
+const createUserOnSignup = async (user: any) => {
   const {schemas: {user: schema}, tables: {user: tableName}}: IConstants = constants;
-  const label = 'create user';
-  let params: string[] = []
+  const label = 'create user on signup';
+  let params = [
+    user.userParams.Username,
+    // user.userIdentity.federatedId,
+    user.email,
+    user.name,
+    JSON.stringify(user.roles),
+  ];
 
   const sql = `
-    SELECT 'no-op';
+    INSERT INTO ${schema}.${tableName}
+    (
+      id, 
+      federated_id, 
+      email,
+      name,
+      roles,
+      created_at, 
+      created_by, 
+      updated_at, 
+      updated_by
+    )
+    VALUES ($1, $2, $3, $4, $5, NOW(), $1, NOW(), $1)
+    RETURNING *;
   `;
 
   try {
@@ -42,7 +77,7 @@ const createUser = async (
   } catch (e) {
     return Promise.reject(e);
   }
-};
+}
 
 export const updateUser = async (
   adminUser: UserObj,
