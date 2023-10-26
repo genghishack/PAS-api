@@ -28,10 +28,12 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const accessTokenUserObj: AccessTokenUserObj = await token.validate(accessToken);
     const userObj: UserObj = await getUserObj(accessTokenUserObj);
-    // log.debug({userObj});
+    log.debug({userObj});
+    globalThis.log = log.child({userId: userObj.userParams.Username})
     res.locals.user = userObj;
   } catch (e) {
     log.error(e);
+    globalThis.log = log.child({userId: null})
   }
   next();
 });

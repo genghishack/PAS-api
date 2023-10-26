@@ -10,7 +10,7 @@ import {
   CognitoGroupObj,
   CognitoUserAttribute,
   CognitoUserObj,
-  CognitoUserParams,
+  CognitoUserParams, DBUserObj,
   UserObj
 } from "./types/user";
 
@@ -77,9 +77,22 @@ export const defaultCognitoGroupObj: CognitoGroupObj = {
   CreationDate: '',
 }
 
+export const defaultDBUserObj: DBUserObj = {
+  id: '',
+  federated_id: '',
+  email: '',
+  name: '',
+  roles: [],
+  created_at: '',
+  created_by: '',
+  updated_at: '',
+  updated_by: '',
+}
+
 export const defaultUser: UserObj = {
   auth: false,
   accessToken: defaultAccessTokenUserObj,
+  dbUser: defaultDBUserObj,
   userParams: defaultCognitoUserParams,
   cognitoUser: defaultCognitoUserObj,
   cognitoGroups: [defaultCognitoGroupObj],

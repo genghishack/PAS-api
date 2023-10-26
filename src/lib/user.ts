@@ -1,5 +1,6 @@
 import {getCognitoUserObj, getCognitoUserGroups, getCognitoUserParams, addCognitoUserToGroup} from "./cognito.js";
 import {AccessTokenUserObj, CognitoUserObj, UserObj, CognitoUserParams} from "../types/user";
+import {getUser} from "../sql/user.js";
 
 export const isAdmin = (user: UserObj) => {
   return user.auth && user.accessToken['cognito:groups'].includes('Admin');
@@ -22,9 +23,11 @@ export const getUserObj = async (ATUserObj: AccessTokenUserObj): Promise<UserObj
   try {
     const cognitoUserObj: CognitoUserObj = await getCognitoUserObj(userParams)
     const cognitoUserGroups = await getCognitoUserGroups(userParams);
+    const dbUserObj = await getUser(userParams.Username);
     return<UserObj> {
       auth: true,
       accessToken: ATUserObj,
+      dbUser: dbUserObj,
       cognitoUser: cognitoUserObj,
       cognitoGroups: cognitoUserGroups,
       userParams,

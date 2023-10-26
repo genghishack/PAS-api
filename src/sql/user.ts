@@ -7,19 +7,18 @@ export const getUser = async (
   debug: boolean = false
 ) => {
   const {schemas: {user: schema}, tables: {user: tableName}}: IConstants = constants;
-  const label = `get user by id ${id}`;
+  const label = `get user ${id}`;
+  log.info(label);
   let params: string[] = [id]
 
-  // const sql = `SELECT postgis_full_version();`
   const sql = `
     SELECT * from ${schema}.${tableName}
     WHERE id = $1;
   `;
 
   try {
-    const result = await pgQuery(sql, params, label, debug);
-    log.debug(result);
-    return result;
+    const [user] = await pgQuery(sql, params, label, debug);
+    return user;
   } catch (e) {
     log.error(e);
     return Promise.reject(e);

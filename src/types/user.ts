@@ -40,10 +40,23 @@ export type CognitoGroupObj = {
   "CreationDate": string
 }
 
+export type DBUserObj = {
+  id: string,
+  federated_id: string,
+  email: string,
+  name: string,
+  roles: string[],
+  created_at: string,
+  created_by: string,
+  updated_at: string,
+  updated_by: string
+}
+
 export type UserObj = {
   auth: boolean;
   accessToken: AccessTokenUserObj;
-  userParams: CognitoUserParams;
+  dbUser: DBUserObj;
   cognitoUser: CognitoUserObj;
   cognitoGroups: CognitoGroupObj[];
+  userParams: CognitoUserParams;
 }

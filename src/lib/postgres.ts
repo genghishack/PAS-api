@@ -43,7 +43,6 @@ export const pgQuery = async (
   try {
     await pgConnect(pgClient);
     const result: pg.QueryResult = await pgClient.query(sql, parameters);
-    log.debug({result});
     return result.rows;
   } catch (e) {
     log.debug(`Error in SQL Query '${sqlLabel}'`, parameters, sql);

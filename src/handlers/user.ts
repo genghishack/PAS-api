@@ -25,17 +25,15 @@ export const listUsers = async (req: Request, res: Response, next: NextFunction)
   } catch (e) {
     return failure(res, e)
   }
-  return success(res, 'list of users');
 }
 
 export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
   if (!isAdmin(user)) return noAccess(res);
 
-  const result = await getUser('c23847d3-e44e-461b-b3d2-49ff936bb9d2', true)
-  // const message = `user ${req.params.id}`;
-  log.debug(result);
-  return success(res, 'Hello');
+  const userDBObj = await getUser(req.params.id, false)
+  log.debug({userDBObj});
+  return success(res, userDBObj);
 }
 
 // const createUser = async (user, id, data) => {
