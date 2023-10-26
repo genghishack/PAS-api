@@ -1,7 +1,7 @@
 import express, {Express, NextFunction, Request, Response} from 'express';
 import cors from 'cors';
 import {IConstants} from "./types/constants";
-import {init} from "./setup.js";
+import {defaultCognitoUserObj, init} from "./setup.js";
 import resource from "./routes/resource.js";
 import user from "./routes/user.js";
 import {getUserObj} from "./lib/user.js";
@@ -24,17 +24,11 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).send("Access Token missing");
   }
   // log.debug({accessToken});
-  res.locals.user = {
-    auth: false,
-    accessToken: null,
-    cognitoUser: null,
-    cognitoGroups: null,
-    userParams: null,
-  };
+  res.locals.user = defaultCognitoUserObj;
   try {
     const accessTokenUserObj: AccessTokenUserObj = await token.validate(accessToken);
     const userObj: UserObj = await getUserObj(accessTokenUserObj);
-    log.debug({userObj});
+    // log.debug({userObj});
     res.locals.user = userObj;
   } catch (e) {
     log.error(e);

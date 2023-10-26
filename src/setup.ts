@@ -5,6 +5,14 @@ import bunyan from "bunyan";
 import {Constants, Schemas, Tables} from "./types/constants";
 import {getDateStamp} from "./lib/utils.js";
 import CognitoExpress from "cognito-express";
+import {
+  AccessTokenUserObj,
+  CognitoGroupObj,
+  CognitoUserAttribute,
+  CognitoUserObj,
+  CognitoUserParams,
+  UserObj
+} from "./types/user";
 
 declare global {
   var log: Logger;
@@ -25,6 +33,56 @@ export const defaultTables: Tables = {
   professional: 'professional',
   prof_x_cat: 'professional_category',
   prof_deleted: 'professional_deleted',
+}
+
+export const defaultAccessTokenUserObj: AccessTokenUserObj = {
+  sub: '',
+  "cognito:groups": [],
+  iss: '',
+  client_id: '',
+  event_id: '',
+  token_use: '',
+  scope: '',
+  auth_time: 0,
+  exp: 0,
+  iat: 0,
+  jti: '',
+  username: ''
+}
+
+export const defaultCognitoUserParams: CognitoUserParams = {
+  Username: '',
+  UserPoolId: '',
+}
+
+export const defaultCognitoUserAttribute: CognitoUserAttribute = {
+  Name: '',
+  Value: '',
+}
+
+export const defaultCognitoUserObj: CognitoUserObj = {
+  Username: '',
+  UserAttributes: [defaultCognitoUserAttribute],
+  UserCreateDate: '',
+  UserLastModifiedDate: '',
+  Enabled: false,
+  UserStatus: ''
+}
+
+export const defaultCognitoGroupObj: CognitoGroupObj = {
+  GroupName: '',
+  UserPoolId: '',
+  RoleArn: '',
+  LastModifiedDate: '',
+  CreationDate: '',
+}
+
+export const defaultUser: UserObj = {
+  auth: false,
+  accessToken: defaultAccessTokenUserObj,
+  userParams: defaultCognitoUserParams,
+  cognitoUser: defaultCognitoUserObj,
+  cognitoGroups: [defaultCognitoGroupObj],
 }
 
 export const init = (): void => {

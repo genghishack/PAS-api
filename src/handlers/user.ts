@@ -5,6 +5,7 @@ import {getUserModel, isAdmin, isGuest} from "../lib/user.js";
 import {failure, noAccess, success} from "../lib/response.js";
 import {createCognitoUser, listCognitoUsers} from "../lib/cognito.js";
 import {getAdminUserModel} from "../lib/admin.js";
+import {getUser} from "../sql/user.js";
 
 export const listUsers = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
@@ -31,9 +32,10 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   const {user} = res.locals;
   if (!isAdmin(user)) return noAccess(res);
 
-  const message = `user ${req.params.id}`;
-  log.debug(message);
-  return success(res, message);
+  const result = await getUser('c23847d3-e44e-461b-b3d2-49ff936bb9d2', true)
+  // const message = `user ${req.params.id}`;
+  log.debug(result);
+  return success(res, 'Hello');
 }
 
 // const createUser = async (user, id, data) => {

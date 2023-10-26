@@ -10,6 +10,7 @@ export const getUser = async (
   const label = `get user by id ${id}`;
   let params: string[] = [id]
 
+  // const sql = `SELECT postgis_full_version();`
   const sql = `
     SELECT * from ${schema}.${tableName}
     WHERE id = $1;
