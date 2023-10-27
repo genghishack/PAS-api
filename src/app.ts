@@ -23,12 +23,10 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   if (!accessToken) {
     return res.status(401).send("Access Token missing");
   }
-  // log.debug({accessToken});
   res.locals.user = defaultCognitoUserObj;
   try {
     const accessTokenUserObj: AccessTokenUserObj = await token.validate(accessToken);
     const userObj: UserObj = await getUserObj(accessTokenUserObj);
-    log.debug({userObj});
     globalThis.log = log.child({userId: userObj.userParams.Username})
     res.locals.user = userObj;
   } catch (e) {

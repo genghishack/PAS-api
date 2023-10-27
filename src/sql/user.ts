@@ -1,6 +1,6 @@
 import {pgCleanString, pgQuery} from "../lib/postgres.js";
 import {IConstants} from "../types/constants";
-import {UserObj} from "../types/user";
+import {IUserObj, UserObj} from "../types/user";
 
 export const getUser = async (
   id: string,
@@ -111,4 +111,21 @@ export const updateUser = async (
   } catch (e) {
     return Promise.reject(e);
   }
+}
+export const userCreateSelfDBRecord = async (user: UserObj, data: any) => {
+  const {schemas: {user: schema}, tables: {user: tableName}}: IConstants = constants;
+  const {userParams: {Username}}: IUserObj = user;
+
+  const label = `create user db record ${Username} upon signup`;
+  log.info(label);
+
+  const params = [Username, data.email, data.name, JSON.stringify(data.roles)];
+  const sql = `
+    INSERT INTO ${schema}.${tableName} (
+      id, email, name, roles, created_at, created_by, updated_at, updated_by
+    )
+    VALUES ($1, $2, $3, $4, NOW(), $1, NOW(), $1)
+    RETURNING *;
+  `;
+  return pgQuery(sql, params, label, false);
 }

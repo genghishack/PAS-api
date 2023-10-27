@@ -60,3 +60,7 @@ export type UserObj = {
   cognitoGroups: CognitoGroupObj[];
   userParams: CognitoUserParams;
 }
+
+export interface IUserObj {
+  userParams: CognitoUserParams;
+}

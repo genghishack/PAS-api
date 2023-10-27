@@ -1,5 +1,5 @@
-import {getCognitoUserObj, getCognitoUserGroups, getCognitoUserParams, addCognitoUserToGroup} from "./cognito.js";
 import {AccessTokenUserObj, CognitoUserObj, UserObj, CognitoUserParams} from "../types/user";
+import {getCognitoUserObj, getCognitoUserGroups, getCognitoUserParams, addCognitoUserToGroup} from "./cognito.js";
 import {getUser} from "../sql/user.js";
 
 export const isAdmin = (user: UserObj) => {
@@ -68,6 +68,6 @@ export const getUserAttribute = (cognitoUser: any, attrName: string) => {
 }
 
 export const getUserModel = (userRecord: any) => {
-  const {id, email, name, roles} = userRecord;
-  return {id, email, name, roles};
+  const {id, name, email, roles} = userRecord;
+  return {id, name, email, roles};
 }
