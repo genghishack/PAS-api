@@ -5,8 +5,7 @@ import {getUserModel, isAdmin, isGuest} from "../lib/user.js";
 import {failure, noAccess, success} from "../lib/response.js";
 import {deleteCognitoUser, listCognitoUsers} from "../lib/cognito.js";
 import {adminCreateUser, adminGetUserModel} from "../lib/admin.js";
-import {getUser, userCreateSelfDBRecord} from "../sql/user.js";
-import {adminDeleteUser} from "../sql/admin.js";
+import {deleteUser, getUser, userCreateSelfDBRecord} from "../sql/user.js";
 
 export const adminListUsers = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
@@ -51,7 +50,7 @@ export const adminDeleteUserById = async (req: Request, res: Response, next: Nex
     UserPoolId: userPoolId
   }
   try {
-    const deletedUser = await adminDeleteUser(req.params.id);
+    const deletedUser = await deleteUser(req.params.id);
     await deleteCognitoUser(requestedUserParams);
     return success(res, {data: deletedUser, count: 1});
   } catch (e) {

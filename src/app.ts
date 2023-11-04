@@ -6,7 +6,11 @@ import {defaultCognitoUserObj, init} from "./setup.js";
 import professional from "./routes/professional.js";
 import user from "./routes/user.js";
 import {getUserObj} from "./lib/user.js";
+import category from "./routes/category.js";
 
+/**
+ * Initialization (globals and logging)
+ */
 init();
 const {api: {port}}: IConstants = constants;
 const app: Express = express();
@@ -16,7 +20,8 @@ const app: Express = express();
  */
 app.use(cors());
 app.use(express.json());
-// Authentication
+
+// Authentication Middleware
 app.use(async (req: Request, res: Response, next: NextFunction) => {
   const {aws: {cognito: {token}}}: IConstants = constants;
   let accessToken = req.headers.authorization;
@@ -40,12 +45,15 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
  * Top-Level Routes
  */
 app.use('/professional', professional);
-// app.use('/category', category);
+app.use('/category', category);
 app.use('/user', user);
 app.get('/', (req: Request, res: Response, next: NextFunction): void => {
   res.send('API Running');
 });
 
+/**
+ * Activation
+ */
 app.listen(port, (): void => {
   log.info(`API running on port ${port}`);
 });

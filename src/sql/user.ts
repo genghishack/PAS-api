@@ -1,8 +1,6 @@
 import {pgCleanString, pgQuery} from "../lib/postgres.js";
 import {IConstants} from "../types/constants";
 import {IUserObj, UserObj} from "../types/user";
-import {isGuest} from "../lib/user";
-import {noAccess} from "../lib/response";
 
 export const getUser = async (
   id: string,
@@ -127,6 +125,20 @@ export const userCreateSelfDBRecord = async (user: UserObj, data: any) => {
       id, email, name, roles, created_at, created_by, updated_at, updated_by
     )
     VALUES ($1, $2, $3, $4, NOW(), $1, NOW(), $1)
+    RETURNING *;
+  `;
+  return pgQuery(sql, params, label, false);
+}
+
+export const deleteUser = async (id: string) => {
+  const {schemas: {user: schema}, tables: {user: tableName}}: IConstants = constants;
+  const label = `delete user ${id}`;
+  log.info(label);
+
+  const params = [id];
+  const sql = `
+    DELETE FROM ${schema}.${tableName}
+    WHERE id = $1
     RETURNING *;
   `;
   return pgQuery(sql, params, label, false);
