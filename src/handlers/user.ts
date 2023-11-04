@@ -5,7 +5,7 @@ import {getUserModel, isAdmin, isGuest} from "../lib/user.js";
 import {failure, noAccess, success} from "../lib/response.js";
 import {deleteCognitoUser, listCognitoUsers} from "../lib/cognito.js";
 import {adminCreateUser, adminGetUserModel} from "../lib/admin.js";
-import {userCreateSelfDBRecord} from "../sql/user.js";
+import {getUser, userCreateSelfDBRecord} from "../sql/user.js";
 import {adminDeleteUser} from "../sql/admin.js";
 
 export const adminListUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -102,3 +102,27 @@ export const adminReplaceUserById = async (req: Request, res: Response, next: Ne
   return success(res,{data: message});
 }
 
+export const userGetSelf = async (req: Request, res: Response, next: NextFunction) => {
+  const {user} = res.locals;
+  if (isGuest(user)) return noAccess(res);
+
+  const {userParams: {Username: userId}} = user;
+  try {
+    let userRecord = await getUser(userId);
+    log.debug({userRecord});
+    if (!userRecord) {
+      userRecord = await userCreateSelfDBRecord(user, {});
+    } else {
+      if (userRecord.roles !== user.roles
+        || userRecord.email !== user.email
+        || userRecord.name !== user.name
+      ) {
+        // userRecord = await updateCurrentUser(user);
+      }
+    }
+    // const userModel = getUserModel(userRecord);
+    return success(res, {data: 'fake data', count: 1});
+  } catch (e) {
+    return failure(res, e);
+  }
+}

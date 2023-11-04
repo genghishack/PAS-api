@@ -4,7 +4,7 @@ import {
   adminEditUserById,
   adminGetUserById,
   adminListUsers, adminReplaceUserById,
-  createUser
+  createUser, userGetSelf
 } from "../handlers/user.js";
 
 const router: Router = express.Router();
@@ -16,7 +16,7 @@ router.delete ('/:id', adminDeleteUserById);
 router.patch  ('/:id', adminEditUserById);
 router.put    ('/:id', adminReplaceUserById);
 
-// router.get    ('/self',        userGetSelf);
+router.get    ('/self',        userGetSelf);
 // router.get    ('/roles/:id',   adminListRoles);
 // router.patch  ('/enable/:id',  adminEnableUser);
 // router.patch  ('/disable/:id', adminDisableUser);

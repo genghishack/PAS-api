@@ -1,6 +1,8 @@
 import {pgCleanString, pgQuery} from "../lib/postgres.js";
 import {IConstants} from "../types/constants";
 import {IUserObj, UserObj} from "../types/user";
+import {isGuest} from "../lib/user";
+import {noAccess} from "../lib/response";
 
 export const getUser = async (
   id: string,

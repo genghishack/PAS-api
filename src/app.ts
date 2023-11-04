@@ -1,11 +1,11 @@
 import express, {Express, NextFunction, Request, Response} from 'express';
 import cors from 'cors';
 import {IConstants} from "./types/constants";
+import {AccessTokenUserObj, UserObj} from "./types/user";
 import {defaultCognitoUserObj, init} from "./setup.js";
-import resource from "./routes/resource.js";
+import professional from "./routes/professional.js";
 import user from "./routes/user.js";
 import {getUserObj} from "./lib/user.js";
-import {AccessTokenUserObj, UserObj} from "./types/user";
 
 init();
 const {api: {port}}: IConstants = constants;
@@ -39,7 +39,8 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 /**
  * Top-Level Routes
  */
-app.use('/resource', resource);
+app.use('/professional', professional);
+// app.use('/category', category);
 app.use('/user', user);
 app.get('/', (req: Request, res: Response, next: NextFunction): void => {
   res.send('API Running');
