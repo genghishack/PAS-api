@@ -104,7 +104,9 @@ export const init = (): void => {
   globalThis.constants = {
     api: {
       port: parseInt(process.env.API_PORT!, 10),
-      url: process.env.API_URL!
+      url: process.env.API_URL!,
+      protocol: process.env.API_PROTOCOL!,
+      full: `${process.env.API_PROTOCOL}://${process.env.API_URL!}:${parseInt(process.env.API_PORT!, 10)}`
     },
     aws: {
       region: process.env.AWS_REGION!,

@@ -1,6 +1,8 @@
 export type APIConsts = {
   port: number;
   url: string;
+  protocol: string;
+  full: string;
 }
 
 export type AWSConsts = {
