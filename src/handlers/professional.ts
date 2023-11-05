@@ -1,10 +1,11 @@
-import {NextFunction, Request, Response} from "express";
 import {Serializer} from "jsonapi-serializer";
+import {NextFunction, Request, Response} from "express";
 import {IConstants} from "../types/constants";
 import {isAdmin} from "../lib/user.js";
 import {failure, noAccess, successJson} from "../lib/response.js";
 import {getProfessionalById, listDeletedProfessionals, listProfessionals} from "../sql/professional.js";
 import {getJsonApiSerializer} from "../lib/jsonapi.js";
+import {adminShortCategoryAttributes} from "./category.js";
 
 export const adminShortProfessionalAttributes: string[] = [
   'name_last', 'name_first', 'name_prefix', 'name_suffix',
@@ -60,7 +61,7 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
     categories: {
       ref: 'id',
       included: true,
-      attributes: ['name_display'],
+      attributes: adminShortCategoryAttributes,
     },
     typeForAttribute: (attribute: string): string => {
       return (attribute === 'categories') ? 'category' : attribute;

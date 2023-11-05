@@ -1,8 +1,9 @@
 import {pgQuery} from "../lib/postgres.js";
 import {IConstants} from "../types/constants";
 import {sqlForRowsAsJSON} from "./json.js";
+import {adminShortCategoryFields} from "./category.js";
 
-const adminFullProfessionalFields = `
+export const adminFullProfessionalFields = `
       prof.id, name_last, name_first, name_prefix, name_suffix, name_json,
       phone_main, phone_fax, phone_cell, email, web_url, social_media_ids, contact_json,
       address_street_1, address_street_2, address_city, address_state, 
@@ -11,7 +12,7 @@ const adminFullProfessionalFields = `
       comments, internal_comments, internal_reminders
 `;
 
-const adminShortProfessionalFields = `
+export const adminShortProfessionalFields = `
       prof.id, name_last, name_first, name_prefix, name_suffix,
       address_city, address_state, address_country, organization
 `;
@@ -23,10 +24,10 @@ const sqlForIncludedCategories = (): string => {
   }: IConstants = constants;
 
   const categoriesSQL: string = `
-      SELECT c.id, 
-             c.name_display
-      FROM ${schema}.${catTable} c
-      INNER JOIN ${schema}.${joinTable} j ON (c.id = j.category_id)
+      SELECT 
+      ${adminShortCategoryFields}
+      FROM ${schema}.${catTable} cat
+      INNER JOIN ${schema}.${joinTable} j ON (cat.id = j.category_id)
       WHERE j.professional_id = prof.id
   `;
   return `${sqlForRowsAsJSON(categoriesSQL)} AS categories`;
@@ -37,7 +38,7 @@ export const listProfessionals = async (
 ) => {
   const {
     schemas: {resources: schema},
-    tables: {professional: table, prof_deleted: delTable}
+    tables: {professional: profTable, prof_deleted: delTable}
   }: IConstants = constants;
   let params: string[] = [];
 
@@ -48,7 +49,7 @@ export const listProfessionals = async (
     SELECT 
     ${adminShortProfessionalFields},
     ${sqlForIncludedCategories()}
-    FROM ${schema}.${table} prof
+    FROM ${schema}.${profTable} prof
     LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
     WHERE d.professional_id IS NULL;
   `;
