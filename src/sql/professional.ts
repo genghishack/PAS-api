@@ -20,7 +20,7 @@ export const adminShortProfessionalFields = `
 const sqlForIncludedCategories = (): string => {
   const {
     schemas: {resources: schema},
-    tables: {professional: table, prof_deleted: delTable, category: catTable, prof_x_cat: joinTable}
+    tables: {category: catTable, prof_x_cat: joinTable}
   }: IConstants = constants;
 
   const categoriesSQL: string = `
@@ -68,7 +68,7 @@ export const getProfessionalById = async (
 ) => {
   const {
     schemas: {resources: schema},
-    tables: {professional: table, category: catTable, prof_x_cat: joinTable}
+    tables: {professional: profTable}
   }: IConstants = constants;
   const params: string[] = [id];
 
@@ -78,7 +78,7 @@ export const getProfessionalById = async (
     SELECT 
     ${adminFullProfessionalFields},
     ${sqlForIncludedCategories()}
-    FROM ${schema}.${table} prof
+    FROM ${schema}.${profTable} prof
     WHERE prof.id = $1;
   `;
 
