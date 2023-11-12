@@ -74,14 +74,14 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
       ...adminShortCategoryAttributes,
       'professionals',
     ],
-    professionals: {
-      ref: 'id',
-      included: true,
-      attributes: adminShortProfessionalAttributes
-    },
-    typeForAttribute: (attribute: string): string => {
-      return (attribute === 'professionals') ? 'professional' : attribute;
-    }
+    // professionals: {
+    //   ref: 'id',
+    //   included: true,
+    //   attributes: adminShortProfessionalAttributes
+    // },
+    // typeForAttribute: (attribute: string): string => {
+    //   return (attribute === 'professionals') ? 'professional' : attribute;
+    // }
   })
 
   try {
