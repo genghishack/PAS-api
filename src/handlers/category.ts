@@ -57,7 +57,10 @@ export const adminGetCategory = async (req: Request, res: Response, next: NextFu
 
   try {
     const result: any = await getCategoryById(id, false);
-    return successJson(res, jsonapi.serialize(result));
+    // log.debug({result});
+    const jsonResult = jsonapi.serialize(result);
+    // log.debug({jsonResult});
+    return successJson(res, jsonResult);
   } catch (e) {
     return failure(res, e);
   }
@@ -77,19 +80,22 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
       ...adminShortCategoryAttributes,
       'professionals',
     ],
-    professionals: {
-      ref: 'id',
-      included: true,
-      attributes: adminShortProfessionalAttributes
-    },
-    typeForAttribute: (attribute: string): string => {
-      return (attribute === 'professionals') ? 'professional' : attribute;
-    }
+    // professionals: { // DO NOT UNCOMMENT - unless you are ready to consume included content within JSON on the front end!  It will error HARD!
+    //   ref: 'id',
+    //   included: true,
+    //   attributes: adminShortProfessionalAttributes
+    // },
+    // typeForAttribute: (attribute: string): string => {
+    //   return (attribute === 'professionals') ? 'professional' : attribute;
+    // }
   })
 
   try {
     const result: any = await CategoryByIdWithProfessionals(id, false);
-    return successJson(res, jsonapi.serialize(result));
+    log.debug({result});
+    const jsonResult = jsonapi.serialize(result);
+    log.debug({jsonResult});
+    return successJson(res, jsonResult);
   } catch (e) {
     return failure(res, e);
   }
