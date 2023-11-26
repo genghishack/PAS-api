@@ -29,6 +29,7 @@ const sqlForIncludedProfessionals = (): string => {
   return `${sqlForRowsAsJSON(professionalsSQL)} AS professionals`;
 }
 
+
 export const listCategories = async (
   debug: boolean = false,
 ) => {
@@ -45,7 +46,9 @@ export const listCategories = async (
   `;
 
   try {
-    return pgQuery(sql, params, label, debug);
+    const result = await pgQuery(sql, params, label, debug);
+    // log.debug({result});
+    return result;
   } catch (e) {
     log.error(e);
     return Promise.reject(e);

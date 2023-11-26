@@ -30,8 +30,11 @@ export const adminListCategories = async (req: Request, res: Response, next: Nex
   })
 
   try {
-    const result: any[] = await listCategories();
-    return successJson(res, jsonapi.serialize(result));
+    const result: any = await listCategories();
+    // log.debug({result});
+    const jsonResult = jsonapi.serialize(result);
+    // log.debug({jsonResult});
+    return successJson(res, jsonResult);
   } catch (e) {
     return failure(res, e);
   }
@@ -74,14 +77,14 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
       ...adminShortCategoryAttributes,
       'professionals',
     ],
-    // professionals: {
-    //   ref: 'id',
-    //   included: true,
-    //   attributes: adminShortProfessionalAttributes
-    // },
-    // typeForAttribute: (attribute: string): string => {
-    //   return (attribute === 'professionals') ? 'professional' : attribute;
-    // }
+    professionals: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortProfessionalAttributes
+    },
+    typeForAttribute: (attribute: string): string => {
+      return (attribute === 'professionals') ? 'professional' : attribute;
+    }
   })
 
   try {
