@@ -25,7 +25,7 @@ export const adminListCategories = async (req: Request, res: Response, next: Nex
       self: (): string => `${apiUrl}/category`,
     },
     attributes: [
-      ...adminShortCategoryAttributes
+      ...adminFullCategoryAttributes
     ]
   })
 

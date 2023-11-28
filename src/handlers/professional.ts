@@ -33,7 +33,12 @@ export const adminListProfessionals = async (req: Request, res: Response, next: 
     attributes: [
       ...adminShortProfessionalAttributes,
       'categories',
-    ]
+    ],
+    categories: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortCategoryAttributes
+    }
   })
 
   try {

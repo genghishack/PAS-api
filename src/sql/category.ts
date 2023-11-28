@@ -41,7 +41,7 @@ export const listCategories = async (
 
   const sql: string = `
     SELECT
-    ${adminShortCategoryFields}
+    ${adminFullCategoryFields}
     FROM ${schema}.${catTable} cat;
   `;
 
