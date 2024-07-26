@@ -9,7 +9,7 @@ import {adminShortCategoryAttributes} from "./category.js";
 
 export const adminShortProfessionalAttributes: string[] = [
   'name_last', 'name_first', 'name_prefix', 'name_suffix',
-  'address_city', 'address_state', 'address_country', 'organization'
+  'address_city', 'address_state', 'address_country', 'organization', 'geojson'
 ];
 
 export const adminFullProfessionalAttributes: string[] = [

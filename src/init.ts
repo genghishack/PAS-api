@@ -33,6 +33,7 @@ export const defaultTables: Tables = {
   professional: 'professional',
   prof_x_cat: 'professional_category',
   prof_deleted: 'professional_deleted',
+  prof_geom: 'professional_geom',
 }
 
 export const defaultAccessTokenUserObj: AccessTokenUserObj = {

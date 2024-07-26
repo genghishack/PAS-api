@@ -14,15 +14,17 @@ export const adminShortCategoryFields = `
 const sqlForIncludedProfessionals = (): string => {
   const {
     schemas: {resources: schema},
-    tables: {professional: profTable, prof_deleted: delTable, prof_x_cat: joinTable}
+    tables: {professional: profTable, prof_deleted: delTable, prof_geom: geomTable, prof_x_cat: joinTable}
   }: IConstants = constants;
 
   const professionalsSQL: string = `
       SELECT 
-      ${adminShortProfessionalFields}
+        ${adminShortProfessionalFields},
+        ST_AsGeoJSON(g.shape) AS geojson
       FROM ${schema}.${profTable} prof
       INNER JOIN ${schema}.${joinTable} j ON (prof.id = j.professional_id)
       LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
+      LEFT JOIN ${schema}.${geomTable} g ON (prof.id = g.professional_id)
       WHERE j.category_id = cat.id
       AND d.professional_id IS NULL
   `;
@@ -79,7 +81,7 @@ export const getCategoryById = async (
   }
 }
 
-export const CategoryByIdWithProfessionals = async (
+export const getCategoryByIdWithProfessionals = async (
   id: string,
   debug: boolean = false,
 ) => {

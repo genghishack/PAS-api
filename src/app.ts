@@ -2,7 +2,7 @@ import express, {Express, NextFunction, Request, Response} from 'express';
 import cors from 'cors';
 import {IConstants} from "./types/constants";
 import {AccessTokenUserObj, UserObj} from "./types/user";
-import {defaultCognitoUserObj, init} from "./setup.js";
+import {defaultCognitoUserObj, init} from "./init.js";
 import professional from "./routes/professional.js";
 import user from "./routes/user.js";
 import {getUserObj} from "./lib/user.js";

@@ -13,8 +13,8 @@ export const adminFullProfessionalFields = `
 `;
 
 export const adminShortProfessionalFields = `
-      prof.id, name_last, name_first, name_prefix, name_suffix,
-      address_city, address_state, address_country, organization
+      prof.id, name_last, name_first,
+      address_city, address_state, address_country
 `;
 
 const sqlForIncludedCategories = (): string => {

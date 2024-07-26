@@ -37,6 +37,7 @@ export type Tables = {
   professional: string;
   prof_x_cat: string;
   prof_deleted: string;
+  prof_geom: string;
 }
 
 export type Constants = {

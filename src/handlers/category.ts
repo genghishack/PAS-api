@@ -3,7 +3,7 @@ import {NextFunction, Request, Response} from "express";
 import {IConstants} from "../types/constants";
 import {isAdmin} from "../lib/user.js";
 import {failure, noAccess, successJson} from "../lib/response.js";
-import {getCategoryById, CategoryByIdWithProfessionals, listCategories} from "../sql/category.js";
+import {getCategoryById, getCategoryByIdWithProfessionals, listCategories} from "../sql/category.js";
 import {getJsonApiSerializer} from "../lib/jsonapi.js";
 import {adminShortProfessionalAttributes} from "./professional.js";
 
@@ -80,18 +80,18 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
       ...adminShortCategoryAttributes,
       'professionals',
     ],
-    // professionals: { // DO NOT UNCOMMENT - unless you are ready to consume included content within JSON on the front end!  It will error HARD!
-    //   ref: 'id',
-    //   included: true,
-    //   attributes: adminShortProfessionalAttributes
-    // },
-    // typeForAttribute: (attribute: string): string => {
-    //   return (attribute === 'professionals') ? 'professional' : attribute;
-    // }
+    professionals: { // DO NOT UNCOMMENT - unless you are ready to consume included content within JSON on the front end!  It will error HARD!
+      ref: 'id',
+      included: true,
+      attributes: adminShortProfessionalAttributes
+    },
+    typeForAttribute: (attribute: string): string => {
+      return (attribute === 'professionals') ? 'professional' : attribute;
+    }
   })
 
   try {
-    const result: any = await CategoryByIdWithProfessionals(id, false);
+    const result: any = await getCategoryByIdWithProfessionals(id, false);
     log.debug({result});
     const jsonResult = jsonapi.serialize(result);
     log.debug({jsonResult});

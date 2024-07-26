@@ -1,4 +1,4 @@
-import {init} from "./setup.js";
+import {init} from "./init.js";
 import {pgQuery} from "./lib/postgres.js";
 
 init();
