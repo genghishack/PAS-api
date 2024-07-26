@@ -1,13 +1,11 @@
 import express, {Express, NextFunction, Request, Response} from 'express';
 import cors from 'cors';
 import {IConstants} from "./types/constants";
-import {AccessTokenUserObj, UserObj} from "./types/user";
 import {init} from "./init.js";
 import professional from "./routes/professional.js";
 import user from "./routes/user.js";
-import {getUserObj} from "./lib/user.js";
 import category from "./routes/category.js";
-import {defaultCognitoUserObj} from "./defaults";
+import {authenticateWithCognito} from "./auth";
 
 /**
  * Initialization (globals and logging)
@@ -21,26 +19,7 @@ const app: Express = express();
  */
 app.use(cors());
 app.use(express.json());
-
-// Authentication Middleware
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-  const {aws: {cognito: {token}}}: IConstants = constants;
-  let accessToken = req.headers.authorization;
-  if (!accessToken) {
-    return res.status(401).send("Access Token missing");
-  }
-  res.locals.user = defaultCognitoUserObj;
-  try {
-    const accessTokenUserObj: AccessTokenUserObj = await token.validate(accessToken);
-    const userObj: UserObj = await getUserObj(accessTokenUserObj);
-    globalThis.log = log.child({userId: userObj.userParams.Username})
-    res.locals.user = userObj;
-  } catch (e) {
-    log.error(e);
-    globalThis.log = log.child({userId: null})
-  }
-  next();
-});
+app.use(authenticateWithCognito);
 
 /**
  * Top-Level Routes

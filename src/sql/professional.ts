@@ -13,8 +13,8 @@ export const adminFullProfessionalFields = `
 `;
 
 export const adminShortProfessionalFields = `
-      prof.id, name_last, name_first,
-      address_city, address_state, address_country
+      prof.id, prof.name_last, prof.name_first,
+      addr.city, addr.state, addr.country
 `;
 
 const sqlForIncludedCategories = (): string => {
@@ -38,7 +38,10 @@ export const listProfessionals = async (
 ) => {
   const {
     schemas: {resources: schema},
-    tables: {professional: profTable, prof_deleted: delTable}
+    tables: {
+      professional: profTable, prof_deleted: delTable,
+      prof_x_addr: joinTable, address: addrTable
+    }
   }: IConstants = constants;
   let params: string[] = [];
 
@@ -51,6 +54,8 @@ export const listProfessionals = async (
     ${sqlForIncludedCategories()}
     FROM ${schema}.${profTable} prof
     LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
+    LEFT JOIN ${schema}.${joinTable} j ON (prof.id = j.prof_id)
+    LEFT JOIN ${schema}.${addrTable} addr ON (addr.id = j.addr_id)
     WHERE d.professional_id IS NULL;
   `;
 

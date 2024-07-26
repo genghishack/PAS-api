@@ -14,7 +14,7 @@ export const adminShortCategoryFields = `
 const sqlForIncludedProfessionals = (): string => {
   const {
     schemas: {resources: schema},
-    tables: {professional: profTable, prof_deleted: delTable, prof_geom: geomTable, prof_x_cat: joinTable}
+    tables: {professional: profTable, prof_deleted: delTable, address_geom: geomTable, prof_x_cat: joinTable}
   }: IConstants = constants;
 
   const professionalsSQL: string = `
