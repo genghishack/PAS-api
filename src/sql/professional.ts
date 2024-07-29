@@ -1,70 +1,48 @@
 import {pgQuery} from "../lib/postgres.js";
 import {IConstants} from "../types/constants";
 import {sqlForRowsAsJSON} from "./json.js";
-import {adminShortCategoryFields} from "./category.js";
+import {sqlForShortIncludedCategoriesWithProf} from "./category.js";
+import {sqlForFullIncludedAddressesWithProf, sqlForShortIncludedAddressesWithProf} from "./address.js";
+import {sqlForShortIncludedOrganizationsWithProf} from "./organization.js";
+import {sqlForIncludedSpecialtiesWithProf} from "./specialty.js";
+import {sqlForIncludedSpeakingTopicsWithProf} from "./speakingTopic.js";
+import {
+  sqlForIncludedEmailAddressesWithProf,
+  sqlForIncludedMediaHandlesWithProf,
+  sqlForIncludedPhoneNumbersWithProf,
+  sqlForIncludedUrlsWithProf
+} from "./contact.js";
+import {sqlForShortIncludedPublicationsWithProf} from "./publication.js";
 
 export const adminFullProfessionalFields = `
-      prof.id, name_last, name_first, name_prefix, name_suffix, name_json,
-      phone_main, phone_fax, phone_cell, email, web_url, social_media_ids, contact_json,
-      address_street_1, address_street_2, address_city, address_state, 
-      address_postal_code, address_country, address_json,
-      organization, specialties, speaking_topic, publications, bar_id,
-      comments, internal_comments, internal_reminders
+  prof.id, prof.name_last, prof.name_first, prof.name_prefix, prof.name_suffix 
+  --bar_id,
+  --comments, internal_comments, internal_reminders
 `;
 
 export const adminShortProfessionalFields = `
-      prof.id, prof.name_last, prof.name_first,
-      addr.city, addr.state, addr.country
+  prof.id, prof.name_last, prof.name_first
 `;
 
-const sqlForIncludedCategories = (): string => {
+export const sqlForIncludedProfessionalsWithCat = (): string => {
   const {
     schemas: {resources: schema},
-    tables: {category: catTable, prof_x_cat: joinTable}
+    tables: {professional: profTable, prof_deleted: delTable, address_geom: geomTable, prof_x_cat: joinTable}
   }: IConstants = constants;
 
-  const categoriesSQL: string = `
+  const professionalsSQL: string = `
       SELECT 
-      ${adminShortCategoryFields}
-      FROM ${schema}.${catTable} cat
-      INNER JOIN ${schema}.${joinTable} j ON (cat.id = j.category_id)
-      WHERE j.professional_id = prof.id
+        ${adminShortProfessionalFields},
+        -- add sql for included addresses here
+        ST_AsGeoJSON(g.shape) AS geojson
+      FROM ${schema}.${profTable} prof
+      INNER JOIN ${schema}.${joinTable} j ON (prof.id = j.professional_id)
+      LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
+      LEFT JOIN ${schema}.${geomTable} g ON (prof.id = g.professional_id)
+      WHERE j.category_id = cat.id
+      AND d.professional_id IS NULL
   `;
-  return `${sqlForRowsAsJSON(categoriesSQL)} AS categories`;
-}
-
-export const listProfessionals = async (
-  debug: boolean = false,
-) => {
-  const {
-    schemas: {resources: schema},
-    tables: {
-      professional: profTable, prof_deleted: delTable,
-      prof_x_addr: joinTable, address: addrTable
-    }
-  }: IConstants = constants;
-  let params: string[] = [];
-
-  const label = `list all professionals`;
-  log.info(label)
-
-  const sql = `
-    SELECT 
-    ${adminShortProfessionalFields},
-    ${sqlForIncludedCategories()}
-    FROM ${schema}.${profTable} prof
-    LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
-    LEFT JOIN ${schema}.${joinTable} j ON (prof.id = j.prof_id)
-    LEFT JOIN ${schema}.${addrTable} addr ON (addr.id = j.addr_id)
-    WHERE d.professional_id IS NULL;
-  `;
-
-  try {
-    return pgQuery(sql, params, label, debug);
-  } catch (e) {
-    log.error(e)
-    return Promise.reject(e);
-  }
+  return `${sqlForRowsAsJSON(professionalsSQL)} AS professionals`;
 }
 
 export const getProfessionalById = async (
@@ -82,7 +60,16 @@ export const getProfessionalById = async (
   const sql = `
     SELECT 
     ${adminFullProfessionalFields},
-    ${sqlForIncludedCategories()}
+    ${sqlForIncludedPhoneNumbersWithProf()},
+    ${sqlForIncludedEmailAddressesWithProf()},
+    ${sqlForIncludedUrlsWithProf()},
+    ${sqlForIncludedMediaHandlesWithProf()},
+    ${sqlForIncludedSpecialtiesWithProf()},
+    ${sqlForIncludedSpeakingTopicsWithProf()},
+    ${sqlForFullIncludedAddressesWithProf()},
+    ${sqlForShortIncludedOrganizationsWithProf()},
+    ${sqlForShortIncludedPublicationsWithProf()},
+    ${sqlForShortIncludedCategoriesWithProf()}
     FROM ${schema}.${profTable} prof
     WHERE prof.id = $1;
   `;
@@ -90,6 +77,36 @@ export const getProfessionalById = async (
   try {
     return pgQuery(sql, params, label, debug);
   } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+export const listProfessionals = async (
+  debug: boolean = false,
+) => {
+  const {
+    schemas: {resources: schema},
+    tables: {professional: profTable, prof_deleted: delTable}
+  }: IConstants = constants;
+  let params: string[] = [];
+
+  const label = `list all professionals`;
+  log.info(label)
+
+  const sql = `
+    SELECT 
+    ${adminShortProfessionalFields},
+    ${sqlForShortIncludedAddressesWithProf()},
+    ${sqlForShortIncludedCategoriesWithProf()}
+    FROM ${schema}.${profTable} prof
+    LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
+    WHERE d.professional_id IS NULL;
+  `;
+
+  try {
+    return pgQuery(sql, params, label, debug);
+  } catch (e) {
+    log.error(e)
     return Promise.reject(e);
   }
 }
@@ -107,7 +124,7 @@ export const listDeletedProfessionals = async (
   const sql = `
     SELECT 
     ${adminFullProfessionalFields},
-    ${sqlForIncludedCategories()},
+    ${sqlForShortIncludedCategoriesWithProf()},
       d.reason
     FROM ${schema}.${table} prof
     INNER JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)

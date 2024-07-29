@@ -3,9 +3,9 @@ import Logger from "bunyan";
 import bunyan from "bunyan";
 import dotenv from "dotenv";
 import {Constants} from "./types/constants";
-import {getDateStamp} from "./lib/utils.js";
 import CognitoExpress from "cognito-express";
-import {defaultSchemas, defaultTables} from "./defaults";
+import {getDateStamp} from "./lib/utils.js";
+import {defaultSchemas, defaultTables} from "./defaults.js";
 
 declare global {
   var log: Logger;

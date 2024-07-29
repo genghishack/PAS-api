@@ -41,6 +41,11 @@ export type Tables = {
   topic: string;
   pub: string;
   comment: string;
+  address_geom: string;
+  phone_type: string;
+  email_type: string;
+  url_type: string;
+  media_type: string;
   prof_x_org: string;
   prof_x_cat: string;
   prof_x_addr: string;
@@ -51,7 +56,7 @@ export type Tables = {
   prof_deleted: string;
   prof_phone: string;
   prof_email: string;
-  prof_social: string;
+  prof_media: string;
   prof_url: string;
   prof_bar: string;
   org_x_cat: string;
@@ -64,7 +69,6 @@ export type Tables = {
   org_email: string;
   org_social: string;
   org_url: string;
-  address_geom: string;
 }
 
 export type Constants = {

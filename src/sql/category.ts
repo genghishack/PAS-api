@@ -1,7 +1,7 @@
 import {pgQuery} from "../lib/postgres.js";
 import {IConstants} from "../types/constants";
 import {sqlForRowsAsJSON} from "./json.js";
-import {adminShortProfessionalFields} from "./professional.js";
+import {sqlForIncludedProfessionalsWithCat} from "./professional.js";
 
 export const adminFullCategoryFields = `
       cat.id, name_slug, name_display
@@ -11,24 +11,20 @@ export const adminShortCategoryFields = `
       cat.id, name_display
 `;
 
-const sqlForIncludedProfessionals = (): string => {
+export const sqlForShortIncludedCategoriesWithProf = (): string => {
   const {
     schemas: {resources: schema},
-    tables: {professional: profTable, prof_deleted: delTable, address_geom: geomTable, prof_x_cat: joinTable}
+    tables: {category: catTable, prof_x_cat: joinTable}
   }: IConstants = constants;
 
-  const professionalsSQL: string = `
-      SELECT 
-        ${adminShortProfessionalFields},
-        ST_AsGeoJSON(g.shape) AS geojson
-      FROM ${schema}.${profTable} prof
-      INNER JOIN ${schema}.${joinTable} j ON (prof.id = j.professional_id)
-      LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
-      LEFT JOIN ${schema}.${geomTable} g ON (prof.id = g.professional_id)
-      WHERE j.category_id = cat.id
-      AND d.professional_id IS NULL
+  const sql: string = `
+    SELECT 
+      ${adminShortCategoryFields}
+    FROM ${schema}.${catTable} cat
+    INNER JOIN ${schema}.${joinTable} j ON (cat.id = j.category_id)
+    WHERE j.professional_id = prof.id
   `;
-  return `${sqlForRowsAsJSON(professionalsSQL)} AS professionals`;
+  return `${sqlForRowsAsJSON(sql)} AS categories`;
 }
 
 
@@ -97,7 +93,7 @@ export const getCategoryByIdWithProfessionals = async (
   const sql = `
     SELECT 
     ${adminShortCategoryFields},
-    ${sqlForIncludedProfessionals()}
+    ${sqlForIncludedProfessionalsWithCat()}
     FROM ${schema}.${catTable} cat
     WHERE cat.id = $1;
   `;

@@ -27,6 +27,11 @@ export const defaultTables: Tables = {
   topic: 'speaking_topic',
   pub: 'publication',
   comment: 'comment',
+  address_geom: 'professional_geom',
+  phone_type: 'phone_type',
+  email_type: 'email_type',
+  url_type: 'url_type',
+  media_type: 'social_media_type',
   prof_x_cat: 'professional_category',
   prof_x_org: 'professional_organization',
   prof_x_addr: 'professional_address',
@@ -37,7 +42,7 @@ export const defaultTables: Tables = {
   prof_deleted: 'professional_deleted',
   prof_phone: 'professional_phone',
   prof_email: 'professional_email',
-  prof_social: 'professional_social_media',
+  prof_media: 'professional_social_media',
   prof_url: 'professional_url',
   prof_bar: 'professional_bar_id',
   org_x_cat: 'organization_category',
@@ -50,7 +55,6 @@ export const defaultTables: Tables = {
   org_email: 'organization_email',
   org_social: 'organization_social_media',
   org_url: 'organization_url',
-  address_geom: 'professional_geom',
 }
 
 export const defaultAccessTokenUserObj: AccessTokenUserObj = {
