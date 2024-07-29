@@ -11,13 +11,11 @@ import {adminShortOrganizationAttributes} from "./organization.js";
 import {adminShortPublicationAttributes} from "./publication.js";
 
 export const adminShortProfessionalAttributes: string[] = [
-  'name_last', 'name_first', 'name_prefix', 'name_suffix', 'organization', 'geojson'
+  'name_last', 'name_first'
 ];
 
 export const adminFullProfessionalAttributes: string[] = [
-  'name_last', 'name_first', 'name_prefix', 'name_suffix',
-  'bar_id',
-  'comments', 'internal_comments', 'internal_reminders'
+  'name_last', 'name_first', 'name_prefix', 'name_suffix'
 ];
 
 export const adminListProfessionals = async (req: Request, res: Response, next: NextFunction) => {
@@ -81,7 +79,10 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
       'speaking_topics',
       'addresses',
       'organizations',
+      'publications',
+      'bar_ids',
       'categories',
+      'comments',
     ],
     phone_numbers: {
       ref: 'id',
@@ -128,10 +129,22 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
       included: true,
       attributes: adminShortPublicationAttributes,
     },
+    bar_ids: {
+      ref: 'id',
+      included: true,
+      attributes: ['bar_id', 'state_abbr'],
+    },
     categories: {
       ref: 'id',
       included: true,
       attributes: adminShortCategoryAttributes,
+    },
+    comments: {
+      ref: 'id',
+      included: true,
+      attributes: [
+        'comment', 'public', 'created_by', 'created_at', 'updated_by', 'updated_at'
+      ],
     },
     typeForAttribute: (attribute: string): string => {
       switch (attribute) {
@@ -153,8 +166,12 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
           return 'organization';
         case 'publications':
           return 'publication';
+        case 'bar_ids':
+          return 'bar_id';
         case 'categories':
           return 'category';
+        case 'comments':
+          return 'comment';
         default:
           return attribute;
       }

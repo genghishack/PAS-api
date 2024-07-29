@@ -7,17 +7,17 @@ import {sqlForShortIncludedOrganizationsWithProf} from "./organization.js";
 import {sqlForIncludedSpecialtiesWithProf} from "./specialty.js";
 import {sqlForIncludedSpeakingTopicsWithProf} from "./speakingTopic.js";
 import {
+  sqlForIncludedBarIdsWithProf,
   sqlForIncludedEmailAddressesWithProf,
   sqlForIncludedMediaHandlesWithProf,
   sqlForIncludedPhoneNumbersWithProf,
   sqlForIncludedUrlsWithProf
 } from "./contact.js";
 import {sqlForShortIncludedPublicationsWithProf} from "./publication.js";
+import {sqlForIncludedCommentsWithProf} from "./comment.js";
 
 export const adminFullProfessionalFields = `
   prof.id, prof.name_last, prof.name_first, prof.name_prefix, prof.name_suffix 
-  --bar_id,
-  --comments, internal_comments, internal_reminders
 `;
 
 export const adminShortProfessionalFields = `
@@ -45,6 +45,7 @@ export const sqlForIncludedProfessionalsWithCat = (): string => {
   return `${sqlForRowsAsJSON(professionalsSQL)} AS professionals`;
 }
 
+
 export const getProfessionalById = async (
   id: string,
   debug: boolean = false,
@@ -64,12 +65,14 @@ export const getProfessionalById = async (
     ${sqlForIncludedEmailAddressesWithProf()},
     ${sqlForIncludedUrlsWithProf()},
     ${sqlForIncludedMediaHandlesWithProf()},
+    ${sqlForIncludedBarIdsWithProf()},
     ${sqlForIncludedSpecialtiesWithProf()},
     ${sqlForIncludedSpeakingTopicsWithProf()},
     ${sqlForFullIncludedAddressesWithProf()},
     ${sqlForShortIncludedOrganizationsWithProf()},
     ${sqlForShortIncludedPublicationsWithProf()},
-    ${sqlForShortIncludedCategoriesWithProf()}
+    ${sqlForShortIncludedCategoriesWithProf()},
+    ${sqlForIncludedCommentsWithProf()}
     FROM ${schema}.${profTable} prof
     WHERE prof.id = $1;
   `;

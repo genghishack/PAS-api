@@ -64,3 +64,18 @@ export const sqlForIncludedMediaHandlesWithProf = (): string => {
   `
   return `${sqlForRowsAsJSON(sql)} AS media_handles`;
 }
+
+export const sqlForIncludedBarIdsWithProf = (): string => {
+  const {
+    schemas: {resources: schema},
+    tables: {prof_bar: barTable}
+  }: IConstants = constants;
+
+  const sql: string = `
+    SELECT
+      b.id, b.bar_id, b.state_abbr
+    FROM ${schema}.${barTable} b
+    WHERE b.professional_id = prof.id
+  `
+  return `${sqlForRowsAsJSON(sql)} AS bar_ids`;
+}
