@@ -209,7 +209,7 @@ export const adminListProfessionals = async (req: Request, res: Response, next: 
       self: (): string => `${apiUrl}/professional`,
     },
     dataLinks: {
-      self: (dataSet: any, prof: any): string => `${apiUrl}/professional/${prof.id}`
+      self: (dataSet: any, current: any): string => `${apiUrl}/professional/${current.id}`
     },
     attributes: [
       ...adminShortProfessionalAttributes,

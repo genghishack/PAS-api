@@ -15,31 +15,6 @@ export const adminFullCategoryAttributes: string[] = [
   'name_slug', 'name_display'
 ];
 
-export const adminListCategories = async (req: Request, res: Response, next: NextFunction) => {
-  const {user} = res.locals;
-  if (!isAdmin(user)) return noAccess(res);
-
-  const {api: {full: apiUrl}}: IConstants = constants;
-  const jsonapi: Serializer = getJsonApiSerializer('category', {
-    topLevelLinks: {
-      self: (): string => `${apiUrl}/category`,
-    },
-    attributes: [
-      ...adminFullCategoryAttributes
-    ]
-  })
-
-  try {
-    const result: any = await listCategories();
-    // log.debug({result});
-    const jsonResult = jsonapi.serialize(result);
-    // log.debug({jsonResult});
-    return successJson(res, jsonResult);
-  } catch (e) {
-    return failure(res, e);
-  }
-}
-
 export const adminGetCategory = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
   if (!isAdmin(user)) return noAccess(res);
@@ -80,10 +55,21 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
       ...adminShortCategoryAttributes,
       'professionals',
     ],
-    professionals: { // DO NOT UNCOMMENT - unless you are ready to consume included content within JSON on the front end!  It will error HARD!
+    professionals: {
       ref: 'id',
       included: true,
-      attributes: adminShortProfessionalAttributes
+      attributes: [
+        ...adminShortProfessionalAttributes,
+        'addresses'
+      ],
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/professional/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/professional`
+      }
     },
     typeForAttribute: (attribute: string): string => {
       return (attribute === 'professionals') ? 'professional' : attribute;
@@ -95,6 +81,34 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
     log.debug({result});
     const jsonResult = jsonapi.serialize(result);
     log.debug({jsonResult});
+    return successJson(res, jsonResult);
+  } catch (e) {
+    return failure(res, e);
+  }
+}
+
+export const adminListCategories = async (req: Request, res: Response, next: NextFunction) => {
+  const {user} = res.locals;
+  if (!isAdmin(user)) return noAccess(res);
+
+  const {api: {full: apiUrl}}: IConstants = constants;
+  const jsonapi: Serializer = getJsonApiSerializer('category', {
+    topLevelLinks: {
+      self: (): string => `${apiUrl}/category`,
+    },
+    dataLinks: {
+      self: (dataSet: any, current: any): string => `${apiUrl}/category/${current.id}`
+    },
+    attributes: [
+      ...adminFullCategoryAttributes
+    ]
+  })
+
+  try {
+    const result: any = await listCategories();
+    // log.debug({result});
+    const jsonResult = jsonapi.serialize(result);
+    // log.debug({jsonResult});
     return successJson(res, jsonResult);
   } catch (e) {
     return failure(res, e);
