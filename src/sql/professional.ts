@@ -127,6 +127,7 @@ export const listDeletedProfessionals = async (
   const sql = `
     SELECT 
     ${adminFullProfessionalFields},
+    ${sqlForShortIncludedAddressesWithProf()},
     ${sqlForShortIncludedCategoriesWithProf()},
       d.reason
     FROM ${schema}.${table} prof

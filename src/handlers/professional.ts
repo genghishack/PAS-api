@@ -18,47 +18,6 @@ export const adminFullProfessionalAttributes: string[] = [
   'name_last', 'name_first', 'name_prefix', 'name_suffix'
 ];
 
-export const adminListProfessionals = async (req: Request, res: Response, next: NextFunction) => {
-  const {user} = res.locals;
-  if (!isAdmin(user)) return noAccess(res);
-
-  const {api: {full: apiUrl}}: IConstants = constants;
-  const jsonapi: Serializer = getJsonApiSerializer('professional', {
-    topLevelLinks: {
-      self: (): string => `${apiUrl}/professional`,
-    },
-    attributes: [
-      ...adminShortProfessionalAttributes,
-      'addresses',
-      'categories',
-    ],
-    addresses: {
-      ref: 'id',
-      included: true,
-      attributes: adminShortAddressAttributes,
-    },
-    categories: {
-      ref: 'id',
-      included: true,
-      attributes: adminShortCategoryAttributes,
-    },
-    typeForAttribute: (attribute: string): string => {
-      if (attribute === 'addresses') {
-        return 'address'
-      } else {
-        return (attribute === 'categories') ? 'category' : attribute;
-      }
-    },
-  })
-
-  try {
-    const result: any[] = await listProfessionals(true);
-    return successJson(res, jsonapi.serialize(result));
-  } catch (e) {
-    return failure(res, e);
-  }
-}
-
 export const adminGetProfessional = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
   if (!isAdmin(user)) return noAccess(res);
@@ -75,12 +34,12 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
       'email_addresses',
       'urls',
       'media_handles',
+      'bar_ids',
       'specialties',
       'speaking_topics',
       'addresses',
       'organizations',
       'publications',
-      'bar_ids',
       'categories',
       'comments',
     ],
@@ -104,40 +63,88 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
       included: true,
       attributes: ['media_handle', 'media_type'],
     },
-    specialties: {
-      ref: 'id',
-      included: true,
-      attributes: ['name', 'description'],
-    },
-    speaking_topics: {
-      ref: 'id',
-      included: true,
-      attributes: ['name', 'description'],
-    },
-    addresses: {
-      ref: 'id',
-      included: true,
-      attributes: adminFullAddressAttributes,
-    },
-    organizations: {
-      ref: 'id',
-      included: true,
-      attributes: adminShortOrganizationAttributes,
-    },
-    publications: {
-      ref: 'id',
-      included: true,
-      attributes: adminShortPublicationAttributes,
-    },
     bar_ids: {
       ref: 'id',
       included: true,
       attributes: ['bar_id', 'state_abbr'],
     },
+    specialties: {
+      ref: 'id',
+      included: true,
+      attributes: ['name', 'description'],
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/specialty/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/specialty`
+      }
+    },
+    speaking_topics: {
+      ref: 'id',
+      included: true,
+      attributes: ['name', 'description'],
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/speaking_topic/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/speaking_topic`
+      }
+    },
+    addresses: {
+      ref: 'id',
+      included: true,
+      attributes: adminFullAddressAttributes,
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/address/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/address`
+      }
+    },
+    organizations: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortOrganizationAttributes,
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/organization/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/organization`
+      }
+    },
+    publications: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortPublicationAttributes,
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/publication/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/publication`
+      }
+    },
     categories: {
       ref: 'id',
       included: true,
       attributes: adminShortCategoryAttributes,
+      includedLinks: {
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/category/${current.id}` : null;
+        }
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/category`
+      }
     },
     comments: {
       ref: 'id',
@@ -145,6 +152,12 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
       attributes: [
         'comment', 'public', 'created_by', 'created_at', 'updated_by', 'updated_at'
       ],
+      includedLinks: {
+        self: (record: any, current: any) => `${apiUrl}/comment/${current.id}`
+      },
+      relationshipLinks: {
+        related: `${apiUrl}/comment`
+      }
     },
     typeForAttribute: (attribute: string): string => {
       switch (attribute) {
@@ -186,6 +199,50 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
   }
 }
 
+export const adminListProfessionals = async (req: Request, res: Response, next: NextFunction) => {
+  const {user} = res.locals;
+  if (!isAdmin(user)) return noAccess(res);
+
+  const {api: {full: apiUrl}}: IConstants = constants;
+  const jsonapi: Serializer = getJsonApiSerializer('professional', {
+    topLevelLinks: {
+      self: (): string => `${apiUrl}/professional`,
+    },
+    dataLinks: {
+      self: (dataSet: any, prof: any): string => `${apiUrl}/professional/${prof.id}`
+    },
+    attributes: [
+      ...adminShortProfessionalAttributes,
+      'addresses',
+      'categories',
+    ],
+    addresses: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortAddressAttributes,
+    },
+    categories: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortCategoryAttributes,
+    },
+    typeForAttribute: (attribute: string): string => {
+      if (attribute === 'addresses') {
+        return 'address'
+      } else {
+        return (attribute === 'categories') ? 'category' : attribute;
+      }
+    },
+  })
+
+  try {
+    const result: any[] = await listProfessionals(true);
+    return successJson(res, jsonapi.serialize(result));
+  } catch (e) {
+    return failure(res, e);
+  }
+}
+
 export const adminListDeletedProfessionals = async (req: Request, res: Response, next: NextFunction) => {
   const {user} = res.locals;
   if (!isAdmin(user)) return noAccess(res);
@@ -195,15 +252,36 @@ export const adminListDeletedProfessionals = async (req: Request, res: Response,
     topLevelLinks: {
       self: (): string => `${apiUrl}/professional/deleted`,
     },
+    dataLinks: {
+      self: (dataSet: any, prof: any): string => `${apiUrl}/professional/${prof.id}`
+    },
     attributes: [
-      ...adminFullProfessionalAttributes,
+      ...adminShortProfessionalAttributes,
+      'addresses',
       'categories',
       'reason'
-    ]
+    ],
+    addresses: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortAddressAttributes,
+    },
+    categories: {
+      ref: 'id',
+      included: true,
+      attributes: adminShortCategoryAttributes,
+    },
+    typeForAttribute: (attribute: string): string => {
+      if (attribute === 'addresses') {
+        return 'address'
+      } else {
+        return (attribute === 'categories') ? 'category' : attribute;
+      }
+    },
   })
 
   try {
-    const result: any = await listDeletedProfessionals(false);
+    const result: any = await listDeletedProfessionals(true);
     return successJson(res, jsonapi.serialize(result));
   } catch (e) {
     return failure(res, e);
