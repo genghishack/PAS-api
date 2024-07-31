@@ -17,3 +17,20 @@ export const sqlForIncludedCommentsWithProf = (): string => {
   `;
   return `${sqlForRowsAsJSON(sql)} AS comments`;
 }
+
+export const sqlForIncludedCommentsWithOrg = (): string => {
+  const {
+    schemas: {resources: schema},
+    tables: {comment: mainTable, org_x_comment: joinTable}
+  }: IConstants = constants;
+
+  const sql: string = `
+    SELECT
+      c.id, c.comment, c.public, 
+      c.created_by, c.created_at, c.updated_by, c.updated_at
+    FROM ${schema}.${mainTable} c
+    INNER JOIN ${schema}.${joinTable} j ON (c.id = j.comment_id)
+    WHERE j.organization_id = org.id
+  `;
+  return `${sqlForRowsAsJSON(sql)} AS comments`;
+}

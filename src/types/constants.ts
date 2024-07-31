@@ -67,7 +67,7 @@ export type Tables = {
   org_deleted: string;
   org_phone: string;
   org_email: string;
-  org_social: string;
+  org_media: string;
   org_url: string;
 }
 

@@ -61,7 +61,7 @@ export const sqlForFullIncludedAddressesWithProf = (): string => {
 export const sqlForFullIncludedAddressesWithOrg = (): string => {
   const {
     schemas: {resources: schema},
-    tables: {address: addrTable, prof_x_addr: joinTable}
+    tables: {address: addrTable, org_x_addr: joinTable}
   }: IConstants = constants;
 
   const sql: string = `

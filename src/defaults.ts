@@ -53,7 +53,7 @@ export const defaultTables: Tables = {
   org_deleted: 'organization_deleted',
   org_phone: 'organization_phone',
   org_email: 'organization_email',
-  org_social: 'organization_social_media',
+  org_media: 'organization_social_media',
   org_url: 'organization_url',
 }
 

@@ -16,3 +16,19 @@ export const sqlForIncludedSpecialtiesWithProf = (): string => {
   `;
   return `${sqlForRowsAsJSON(sql)} AS specialties`;
 }
+
+export const sqlForIncludedSpecialtiesWithOrg = (): string => {
+  const {
+    schemas: {resources: schema},
+    tables: {specialty: specTable, org_x_spec: joinTable}
+  }: IConstants = constants;
+
+  const sql: string = `
+    SELECT
+      spec.id, spec.name, spec.description
+    FROM ${schema}.${specTable} spec
+    INNER JOIN ${schema}.${joinTable} j ON (spec.id = j.specialty_id)
+    WHERE j.organization_id = org.id
+  `;
+  return `${sqlForRowsAsJSON(sql)} AS specialties`;
+}

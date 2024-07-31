@@ -153,7 +153,9 @@ export const adminGetProfessional = async (req: Request, res: Response, next: Ne
         'comment', 'public', 'created_by', 'created_at', 'updated_by', 'updated_at'
       ],
       includedLinks: {
-        self: (record: any, current: any) => `${apiUrl}/comment/${current.id}`
+        self: (record: any, current: any) => {
+          return (current) ? `${apiUrl}/comment/${current.id}` : null;
+        }
       },
       relationshipLinks: {
         related: `${apiUrl}/comment`
@@ -236,7 +238,7 @@ export const adminListProfessionals = async (req: Request, res: Response, next: 
   })
 
   try {
-    const result: any[] = await listProfessionals(true);
+    const result: any[] = await listProfessionals(false);
     return successJson(res, jsonapi.serialize(result));
   } catch (e) {
     return failure(res, e);
@@ -253,7 +255,7 @@ export const adminListDeletedProfessionals = async (req: Request, res: Response,
       self: (): string => `${apiUrl}/professional/deleted`,
     },
     dataLinks: {
-      self: (dataSet: any, prof: any): string => `${apiUrl}/professional/${prof.id}`
+      self: (dataSet: any, current: any): string => `${apiUrl}/professional/${current.id}`
     },
     attributes: [
       ...adminShortProfessionalAttributes,
@@ -281,7 +283,7 @@ export const adminListDeletedProfessionals = async (req: Request, res: Response,
   })
 
   try {
-    const result: any = await listDeletedProfessionals(true);
+    const result: any = await listDeletedProfessionals(false);
     return successJson(res, jsonapi.serialize(result));
   } catch (e) {
     return failure(res, e);
