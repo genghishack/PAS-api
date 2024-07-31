@@ -3,6 +3,7 @@ import cors from 'cors';
 import {IConstants} from "./types/constants";
 import {init} from "./init.js";
 import professional from "./routes/professional.js";
+import organization from "./routes/organization.js";
 import user from "./routes/user.js";
 import category from "./routes/category.js";
 import {authenticateWithCognito} from "./auth.js";
@@ -25,6 +26,7 @@ app.use(authenticateWithCognito);
  * Top-Level Routes
  */
 app.use('/professional', professional);
+app.use('/organization', organization);
 app.use('/category', category);
 app.use('/user', user);
 app.get('/', (req: Request, res: Response, next: NextFunction): void => {

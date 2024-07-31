@@ -27,6 +27,21 @@ export const sqlForShortIncludedCategoriesWithProf = (): string => {
   return `${sqlForRowsAsJSON(sql)} AS categories`;
 }
 
+export const sqlForShortIncludedCategoriesWithOrg = (): string => {
+  const {
+    schemas: {resources: schema},
+    tables: {category: catTable, org_x_cat: joinTable}
+  }: IConstants = constants;
+
+  const sql: string = `
+    SELECT 
+      ${adminShortCategoryFields}
+    FROM ${schema}.${catTable} cat
+    INNER JOIN ${schema}.${joinTable} j ON (cat.id = j.category_id)
+    WHERE j.organization_id = org.id
+  `;
+  return `${sqlForRowsAsJSON(sql)} AS categories`;
+}
 
 export const listCategories = async (
   debug: boolean = false,

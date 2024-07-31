@@ -26,6 +26,22 @@ export const sqlForShortIncludedAddressesWithProf = (): string => {
   return `${sqlForRowsAsJSON(sql)} AS addresses`;
 }
 
+export const sqlForShortIncludedAddressesWithOrg = (): string => {
+  const {
+    schemas: {resources: schema},
+    tables: {address: addrTable, org_x_addr: joinTable}
+  }: IConstants = constants;
+
+  const sql: string = `
+    SELECT
+      ${adminShortAddressFields}
+    FROM ${schema}.${addrTable} addr
+    INNER JOIN ${schema}.${joinTable} j ON (addr.id = j.address_id)
+    WHERE j.organization_id = org.id
+  `;
+  return `${sqlForRowsAsJSON(sql)} AS addresses`;
+}
+
 export const sqlForFullIncludedAddressesWithProf = (): string => {
   const {
     schemas: {resources: schema},
@@ -38,6 +54,22 @@ export const sqlForFullIncludedAddressesWithProf = (): string => {
     FROM ${schema}.${addrTable} addr
     INNER JOIN ${schema}.${joinTable} j ON (addr.id = j.address_id)
     WHERE j.professional_id = prof.id
+  `;
+  return `${sqlForRowsAsJSON(sql)} AS addresses`;
+}
+
+export const sqlForFullIncludedAddressesWithOrg = (): string => {
+  const {
+    schemas: {resources: schema},
+    tables: {address: addrTable, prof_x_addr: joinTable}
+  }: IConstants = constants;
+
+  const sql: string = `
+    SELECT
+      ${adminFullAddressFields}
+    FROM ${schema}.${addrTable} addr
+    INNER JOIN ${schema}.${joinTable} j ON (addr.id = j.address_id)
+    WHERE j.organization_id = org.id
   `;
   return `${sqlForRowsAsJSON(sql)} AS addresses`;
 }
