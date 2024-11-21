@@ -60,7 +60,8 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
       included: true,
       attributes: [
         ...adminShortProfessionalAttributes,
-        'addresses'
+        'addresses',
+        'geojson'
       ],
       includedLinks: {
         self: (record: any, current: any) => {
@@ -77,7 +78,7 @@ export const adminGetCategoryWithProfessionals = async (req: Request, res: Respo
   })
 
   try {
-    const result: any = await getCategoryByIdWithProfessionals(id, false);
+    const result: any = await getCategoryByIdWithProfessionals(id, true);
     log.debug({result});
     const jsonResult = jsonapi.serialize(result);
     log.debug({jsonResult});

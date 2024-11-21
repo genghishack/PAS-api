@@ -27,7 +27,7 @@ export const defaultTables: Tables = {
   topic: 'speaking_topic',
   pub: 'publication',
   comment: 'comment',
-  address_geom: 'professional_geom',
+  address_geom: 'address_geom',
   phone_type: 'phone_type',
   email_type: 'email_type',
   url_type: 'url_type',

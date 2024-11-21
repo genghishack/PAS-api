@@ -50,11 +50,13 @@ export const sqlForIncludedProfessionalsWithCat = (): string => {
       SELECT 
         ${adminShortProfessionalFields},
         ${sqlForShortIncludedAddressesWithProf()}
-        --ST_AsGeoJSON(g.shape) AS geojson
+        ,ST_AsGeoJSON(g.shape) AS geojson
       FROM ${schema}.${profTable} prof
       INNER JOIN ${schema}.${joinTable} j ON (prof.id = j.professional_id)
       LEFT JOIN ${schema}.${delTable} d ON (prof.id = d.professional_id)
---      LEFT JOIN ${schema}.${geomTable} g ON (prof.id = g.professional_id)
+      LEFT JOIN ${schema}.professional_address pa ON (prof.id = pa.professional_id)
+      LEFT JOIN ${schema}.address a ON (pa.address_id = a.id)
+      LEFT JOIN ${schema}.${geomTable} g ON (a.id = g.address_id)
       WHERE j.category_id = cat.id
       AND d.professional_id IS NULL
   `;
